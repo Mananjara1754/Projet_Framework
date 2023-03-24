@@ -5,8 +5,11 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
+import etu1754.framework.*;
+import java.util.HashMap;
 
 public class FrontServlet extends HttpServlet {
+    HashMap<String,Mapping> MappingUrls; 
     protected void processRequest(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
         PrintWriter out = res.getWriter();
         Utilitaire use = new Utilitaire();
