@@ -2,6 +2,7 @@ package etu1754.framework.servlet;
 import utils.Utilitaire;
 import java.io.*;
 import javax.servlet.*;
+import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -12,22 +13,34 @@ import java.util.Vector;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 import note.Fonction;
 import java.lang.annotation.Annotation;
+import java.net.URI;
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls; 
 
     public void init()throws ServletException{
+        ServletContext context = this.getServletContext();
         //...traitement
         Utilitaire use = new Utilitaire();
         Mapping mapping = null;
         String nom = "null";
         ArrayList<Class<?>> params = new ArrayList<>();
-        String lien = "D:\\FIANARANA\\Logiciel\\apache-tomcat-9.0.64-windows-x64\\apache-tomcat-9.0.64\\webapps\\sprint3\\WEB-INF\\classes\\";
-        ArrayList<Class<?>> cl = use.getAll_Classe(lien,params,lien);
-        HashMap<String,Mapping> huhu = new  HashMap<String,Mapping>();
+        
         try {
+                //Avoir url
+            ClassLoader loader = context.getClassLoader();
+            URI uri = Objects.requireNonNull(loader.getResource("")).toURI();
+            File f = new File(uri);
+            String classPath = f.getPath();
+            System.out.println(classPath); 
+            System.out.println("voici le patah");
+            String lien = classPath;
+            //String lien = "D:\\FIANARANA\\Logiciel\\apache-tomcat-9.0.64-windows-x64\\apache-tomcat-9.0.64\\webapps\\sprint3\\WEB-INF\\classes\\";
+            ArrayList<Class<?>> cl = use.getAll_Classe(lien,params,lien);
+            HashMap<String,Mapping> huhu = new  HashMap<String,Mapping>();
             for (int i = 0; i < cl.size(); i++) {
                 for (int j = 0; j < cl.get(i).getDeclaredMethods().length; j++) {
                     if (cl.get(i).getDeclaredMethods()[j].isAnnotationPresent(Fonction.class)){
