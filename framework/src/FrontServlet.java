@@ -14,9 +14,10 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-
+import modelview.ModelView;
 import note.Fonction;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.net.URI;
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls; 
@@ -28,7 +29,6 @@ public class FrontServlet extends HttpServlet {
         Mapping mapping = null;
         String nom = "null";
         ArrayList<Class<?>> params = new ArrayList<>();
-        
         try {
                 //Avoir url
             ClassLoader loader = context.getClassLoader();
@@ -36,16 +36,16 @@ public class FrontServlet extends HttpServlet {
             File f = new File(uri);
             String classPath = f.getPath();
             System.out.println(classPath); 
-            System.out.println("voici le patah");
+            System.out.println("voici le path");
             String lien = classPath;
-            //String lien = "D:\\FIANARANA\\Logiciel\\apache-tomcat-9.0.64-windows-x64\\apache-tomcat-9.0.64\\webapps\\sprint3\\WEB-INF\\classes\\";
+
             ArrayList<Class<?>> cl = use.getAll_Classe(lien,params,lien);
             HashMap<String,Mapping> huhu = new  HashMap<String,Mapping>();
             for (int i = 0; i < cl.size(); i++) {
                 for (int j = 0; j < cl.get(i).getDeclaredMethods().length; j++) {
                     if (cl.get(i).getDeclaredMethods()[j].isAnnotationPresent(Fonction.class)){
                         Annotation fonction = cl.get(i).getDeclaredMethods()[j].getAnnotation(Fonction.class);
-                            mapping = new Mapping(cl.get(i).getSimpleName(),cl.get(i).getDeclaredMethods()[j].getName());
+                            mapping = new Mapping(cl.get(i).getName(),cl.get(i).getDeclaredMethods()[j].getName());
                             nom = cl.get(i).getDeclaredMethods()[j].getAnnotation(Fonction.class).getClass().getMethod("nomMethod").invoke(fonction).toString();
                             huhu.put(nom,mapping);
                     }
@@ -54,18 +54,40 @@ public class FrontServlet extends HttpServlet {
         this.MappingUrls = huhu;
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        //.. Fin traitement
-
+        }        
     }
     protected void processRequest(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
         PrintWriter out = res.getWriter();
-        System.out.println("Boucle for:");
-        Mapping test = null;
-        for (Map.Entry mapentry : this.MappingUrls.entrySet()) {
-            out.print("\nLa cle est : "+mapentry.getKey());
-            test = (Mapping)mapentry.getValue();
-            out.print("\n"+"La Classe est :"+test.getClassName());
+        Utilitaire use = new Utilitaire();
+        String composant = use.getData(req.getRequestURL().toString());
+       
+        out.print(composant);
+        try {
+            use.verif(composant,this.MappingUrls);
+            Mapping test = null;
+            for (Map.Entry mapentry : this.MappingUrls.entrySet()) {
+                out.print("\nLa cle est : "+mapentry.getKey());
+                test = (Mapping)mapentry.getValue();
+                out.print("\n"+"La Classe est :"+test.getClassName());
+            }
+            Class laclasse = Class.forName(test.getClassName());
+            Object objet = laclasse.getConstructor().newInstance();
+            Method[] function = laclasse.getDeclaredMethods();
+            Method theMeth = null;
+
+            for (int i = 0; i < function.length; i++) {
+                if (function[i].getName().compareToIgnoreCase(test.getMethod()) == 0) {
+                    theMeth = function[i];
+                }
+            }
+            Object Objetview =  theMeth.invoke(objet,1);
+            ModelView view = (ModelView)Objetview;
+            RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
+            dispat.forward(req,res);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            out.print(e.getMessage());
         }
         
     }
