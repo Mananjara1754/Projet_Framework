@@ -12,11 +12,28 @@ import java.nio.file.Path;
 import java.util.List;
 import java.io.File;
 import java.lang.annotation.Annotation;
+
+import etu1754.framework.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utilitaire {
     
-    public String[] getData(String requete) {
+    public void verif(String element,HashMap<String,Mapping> MappingUrls)throws Exception{
+        Mapping test = null;
+        int repere = 0;
+        for (Map.Entry mapentry : MappingUrls.entrySet()){
+            test = (Mapping)mapentry.getValue();
+            if(element.compareToIgnoreCase(mapentry.getKey().toString()) == 0){
+                repere++;
+            }
+        }
+        if(repere == 0){
+            throw new Exception("Le lien est introuvable");
+        }
+    }
+    public String getData(String requete) {
         System.out.println(requete);
         String[] sans_slash = requete.split("/");
         Vector v = new Vector<>();
@@ -28,8 +45,12 @@ public class Utilitaire {
         String[] answer = new String[value.length];
         for (int i = 0; i < answer.length; i++) {
             answer[i] = (String)value[i];
+            System.out.println("annswer "+answer[i]);
         }
-        return answer;
+        if (answer.length == 0) {
+            return null;
+        }
+        return answer[0];
     }
 
     public static ArrayList<String> findAllFilesInFolder(File folder) {
@@ -86,7 +107,6 @@ public class Utilitaire {
                     k = path.replace(origine, "");
                     fold = k.replace("\\", ".").substring(1);
                     for (int i = 0; i < list.size(); i++) {
-                        //System.out.println("voila " + fold+"."+list.get(i));
                         cl.add(Class.forName(fold+"."+list.get(i)));
                     }
                     if (this.verifDirectory(path) == true) {
