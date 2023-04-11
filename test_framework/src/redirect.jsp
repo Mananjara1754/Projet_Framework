@@ -1,3 +1,4 @@
+<%@page import="employee.*"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,5 +9,12 @@
 </head>
 <body>
     <h1>Bonjour les employees</h1>
+        
+    <% 
+
+       // Emp l = (Emp)request.getAttribute("all_emp");
+        out.print(request.getAttribute("all_emp")); 
+    
+    %>
 </body>
 </html>
