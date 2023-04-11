@@ -81,7 +81,13 @@ public class FrontServlet extends HttpServlet {
                 }
             }
             Object Objetview =  theMeth.invoke(objet,1);
+            out.print("Tonga ato");
             ModelView view = (ModelView)Objetview;
+            if (view.getData() != null) {
+                for (Map.Entry mapentry : view.getData().entrySet()) {
+                    req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                }
+            }
             RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
             dispat.forward(req,res);
 
