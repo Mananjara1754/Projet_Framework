@@ -7,15 +7,14 @@
     <title>Test</title>
 </head>
 <body>
-    <form action="FrontServlet" method="get">
+    <form action="save" method="get">
         Nom :
-        <input type="text" name="nom">
+        <input type="text" name="Nom">
         <br><br>
         Age :
-        <input type="number" name="age" id=""><br><br>
+        <input type="number" name="Age" id=""><br><br>
         <input type="submit" value="Okey">
     </form>
-    <a href="all_emp">test</a>
 </body>
 </html>
 
