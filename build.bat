@@ -32,6 +32,6 @@ copy frameworkS4.jar "..\..\test_framework\src\WEB-INF\lib"
 @REM transformation du repertoire temp en fichier war
     cd temp
 
-    jar -cf test_framework.war .
+    jar -cf testFrameworkOkey.war .
 
-copy test_framework.war "E:\FIANARANA\Logiciel\apache-tomcat-9.0.64-windows-x64\apache-tomcat-9.0.64\webapps"
+copy testFrameworkOkey.war "E:\FIANARANA\Logiciel\apache-tomcat-9.0.64-windows-x64\apache-tomcat-9.0.64\webapps"

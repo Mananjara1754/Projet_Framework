@@ -1,11 +1,17 @@
 package modelview;
 import java.util.HashMap;
+import java.util.List;
+
 import com.google.gson.Gson;
 public class ModelView {
+
     String view;
     HashMap<String,Object> data;
     HashMap<String,Object> session; 
     boolean isJson;
+    boolean invalidateSession;
+    List<String> removeSession;
+
     public void addSession(String key, Object value) {
         this.session.put(key, value);
     }
@@ -58,5 +64,17 @@ public class ModelView {
     }
     public void setJson(boolean isJson) {
         this.isJson = isJson;
+    }
+    public boolean isInvalidateSession() {
+        return invalidateSession;
+    }
+    public void setInvalidateSession(boolean invalidateSession) {
+        this.invalidateSession = invalidateSession;
+    }
+    public List<String> getRemoveSession() {
+        return removeSession;
+    }
+    public void setRemoveSession(List<String> removeSession) {
+        this.removeSession = removeSession;
     }
 }
