@@ -3,6 +3,8 @@ import java.util.List;
 import java.util.ArrayList;
 import modelview.*;
 import note.Fonction;
+import note.Parametre;
+
 import java.util.HashMap;
 public class Emp {
     String Nom;
@@ -50,5 +52,9 @@ public class Emp {
     @Fonction(nomMethod = "save")
     public void save() {
         System.out.println("Voantso ilay fonction");
+    }
+    @Fonction(nomMethod = "getId")
+    public void getId(@Parametre(nomParametre = "id")int id) {
+        System.out.println("Okey mety be  "+String.valueOf(id));
     }
 }

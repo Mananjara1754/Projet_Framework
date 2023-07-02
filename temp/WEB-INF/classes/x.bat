@@ -1,2 +1,2 @@
-javac -d . *.java 
+javac -parameters -d . *.java 
 startup.bat
