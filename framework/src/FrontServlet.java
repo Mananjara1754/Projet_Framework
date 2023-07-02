@@ -30,7 +30,7 @@ import java.net.URI;
 import java.util.Enumeration;
 import java.lang.reflect.Parameter;
 import javax.servlet.annotation.MultipartConfig;
-
+import com.google.gson.Gson;
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024, // 1MB
         maxFileSize = 1024 * 1024 * 5, // 5MB
@@ -242,6 +242,9 @@ public class FrontServlet extends HttpServlet {
             String profilMethode = "kokoo";
             //Verif de l'annotation Auth
             if (theMeth.isAnnotationPresent(Auth.class)) {
+                if (session.getAttribute("isConnected") == null) {
+                    throw new Exception("Need a connexion");
+                }
                 System.out.println("L'annotation AUTH est present");
                 profilEnSession = String.valueOf(session.getAttribute("profil")) ;
                 connecte = (boolean)session.getAttribute("isConnected");
@@ -290,11 +293,12 @@ public class FrontServlet extends HttpServlet {
                     req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
                 }
             }
-            
-
-            // .... On a deja l'objet et comment le rediriger ? dans quel view?
-            // ServletContext context = this.getServletContext();
-            // context.setAttribute("Objet",objet);
+            if (view.isJson() == true) {
+                String jsonAEnvoye = view.getDataJson();
+                res.setContentType("application/json");
+                out.print(jsonAEnvoye);
+                System.out.println(jsonAEnvoye);
+            }
 
             RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
             dispat.forward(req,res);

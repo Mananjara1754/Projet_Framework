@@ -11,11 +11,12 @@ import note.Auth;
 import fileUpload.FileUpload;
 import java.util.HashMap;
 import note.Singleton;
+
+
 @Singleton()
 public class Emp {
     String Nom;
     int Age;
-
     public String getNom() {
         return Nom;
     }
@@ -41,6 +42,7 @@ public class Emp {
         e.add(new Emp("Soa"));
         mv.addItem("all_emp",e);
         System.out.println("all emploue");
+        mv.setJson(true);
         return mv;
     }
     @Fonction(nomMethod = "login")
