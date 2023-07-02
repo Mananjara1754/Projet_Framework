@@ -1,9 +1,13 @@
 package employee;
 import java.util.List;
+
+import javax.management.modelmbean.ModelMBean;
+
 import java.util.ArrayList;
 import modelview.*;
 import note.Fonction;
 import note.Parametre;
+import note.Auth;
 import fileUpload.FileUpload;
 import java.util.HashMap;
 import note.Singleton;
@@ -28,6 +32,7 @@ public class Emp {
         this.Nom = Nom;
     }
     @Fonction(nomMethod = "all_emp")
+    @Auth(profil = "admin")
     public ModelView getAll() {
         HashMap<String,Object> data = new HashMap<String,Object>();
         ModelView mv = new ModelView("redirect.jsp",data);
@@ -38,15 +43,19 @@ public class Emp {
         System.out.println("all emploue");
         return mv;
     }
-    // @Fonction(nomMethod = "index")
-    // public ModelView index() {
-    //     HashMap<String,Object> data = new HashMap<String,Object>();
-    //     ModelView mv = new ModelView("index.jsp");
-    //     System.out.println("index eh");
-    //     return mv;
-    // }
-    public Emp() {
+    @Fonction(nomMethod = "login")
+    public ModelView login(@Parametre(nomParametre = "Nom")String Nom , @Parametre(nomParametre = "Mdp")String Mdp){
+        HashMap<String,Object> data = new HashMap<String,Object>();
+        ModelView mv = new ModelView("result.jsp",data);
+        mv.addSession("isConnected",true);
+        mv.addSession("profil","admin");
+        mv.addSession("nom",Nom);
+        System.out.println("La voila : ");
+        System.out.println(Mdp);
+        System.out.println("Login ehh"+Nom+Mdp);
+        return mv;
     }
+
     public Emp(String Nom, int Age) {
         this.Nom = Nom;
         this.Age = Age;
@@ -58,5 +67,7 @@ public class Emp {
     @Fonction(nomMethod = "getId")
     public void getId(@Parametre(nomParametre = "id")int id) {
         System.out.println("Okey mety be  "+String.valueOf(id));
+    }
+    public Emp() {
     }
 }
