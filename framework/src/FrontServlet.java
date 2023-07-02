@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.Date;
 
 import etu1754.framework.*;
+import fileUpload.FileUpload;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -25,6 +27,13 @@ import java.net.URI;
 //........2Mai
 import java.util.Enumeration;
 import java.lang.reflect.Parameter;
+import javax.servlet.annotation.MultipartConfig;
+
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 1024 * 1024 * 5, // 5MB
+        maxRequestSize = 1024 * 1024 * 10 // 10MB
+)
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls; 
 
@@ -91,6 +100,7 @@ public class FrontServlet extends HttpServlet {
             for (int i = 0; i < les_attributs.length; i++) {
                 out.println(les_attributs[i].getName() + " Nom des attributs");
                 out.println(req.getParameter(les_attributs[i].getName())+"lA VALEUR");
+                
                 if (req.getParameter(les_attributs[i].getName())!= null) {
                     parametre[0] = les_attributs[i].getType();
                     if (les_attributs[i].getType().getSimpleName().compareToIgnoreCase("String")==0) {
@@ -113,12 +123,30 @@ public class FrontServlet extends HttpServlet {
                         out.print(les_attributs[i].getType().getSimpleName());
                         objet.getClass().getDeclaredMethod("set"+les_attributs[i].getName(),parametre).invoke(objet,Date.valueOf(req.getParameter(les_attributs[i].getName())));
                     }
-                    out.println("Okey le manatsofoka");
+                    
+                    out.println("Okey le mamorina anle objet a partir le formulaire");
+                }
+                else{
+                    
+                        String reqContent = req.getContentType();
+                        if(reqContent != null && reqContent.startsWith("multipart")){
+                            parametre[0] = les_attributs[i].getType();
+                            out.print("Tafiditra ato @ le upload");
+                            Part toupload = req.getPart(les_attributs[i].getName());
+                            out.print("Okey lese");
+                            FileUpload fupld = new FileUpload();
+                            fupld.setNom(toupload.getSubmittedFileName());
+                            fupld.setData(toupload.getInputStream().readAllBytes());
+                     
+                            Method theMethod = objet.getClass().getDeclaredMethod("set"+les_attributs[i].getName(),parametre);
+                            theMethod.invoke(objet,fupld);
+                        }
+                        // out.print(les_attributs[i].getType().getSimpleName());
+                        // objet.getClass().getDeclaredMethod("set"+les_attributs[i].getName(),parametre).invoke(objet,Date.valueOf(req.getParameter(les_attributs[i].getName())));
+                     out.println("Misy file Upload ao \n");
                 }
             }
             //..........SPRINT 8
-
-
             out.print("Voici l'url "+req.getRequestURL().toString());
             //Url recent 
             out.print("Voici l'url "+req.getQueryString());
@@ -178,6 +206,8 @@ public class FrontServlet extends HttpServlet {
                 Objetview =  theMeth.invoke(objet,parametreFonction);
             }else{
                 Objetview =  theMeth.invoke(objet);
+                System.out.println(objet.getClass().getName());
+                System.out.println(objet);
             }
             
             out.print("Tonga ato");

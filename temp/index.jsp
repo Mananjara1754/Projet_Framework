@@ -15,7 +15,16 @@
         <input type="number" name="Age" id=""><br><br>
         <input type="submit" value="Okey">
     </form>
-    <a href="getId?id=5">Test</a>
+    <a href="getId?id=5">Test du Lien (Sprint 8)</a>
+    <hr style=" width: 50px;">
+    <h3>Upload fichier</h3>
+    <form action="saveFile" method="POST" enctype="multipart/form-data">
+        Nom : 
+        <p><input type="text" name="Nom"></p>
+        Photo de profil : 
+        <p><input type="file" name="Pdp"></p>
+        <input type="submit" value="Upload fichier">
+    </form>
 </body>
 </html>
 
