@@ -11,6 +11,8 @@ import note.Auth;
 import fileUpload.FileUpload;
 import java.util.HashMap;
 import note.Singleton;
+import note.RestAPI;
+
 
 
 @Singleton()
@@ -31,6 +33,18 @@ public class Emp {
     }
     public Emp(String Nom) {
         this.Nom = Nom;
+    }
+    @Fonction(nomMethod = "test_restAPI")
+    @Auth(profil = "admin")
+    @RestAPI()
+    public Emp[] employe() {
+        Emp[] tabEmp = new Emp[5];
+        tabEmp[0]  = new Emp("Jean");
+        tabEmp[1]  = new Emp("Jean1");
+        tabEmp[2]  = new Emp("Jean2");
+        tabEmp[3]  = new Emp("Jean3");
+        tabEmp[4]  = new Emp("Jean4");
+        return tabEmp;
     }
     @Fonction(nomMethod = "all_emp")
     @Auth(profil = "admin")

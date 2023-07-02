@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import modelview.ModelView;
 import note.Fonction;
+import note.RestAPI;
 import note.Singleton;
 import note.Auth;
 import java.lang.annotation.Annotation;
@@ -224,90 +225,98 @@ public class FrontServlet extends HttpServlet {
             }
             out.print(theMeth.getParameterTypes());
             out.print(theMeth.getName() + " le nom du method attendue");
-                        
-            Object Objetview = null;
+            //Traitement de l'affiche :
+            boolean isRestApiPresent = false;
+            if (theMeth.isAnnotationPresent(RestAPI.class)) {
+                isRestApiPresent = true;
+            }
+            Object objetview = null;
+            Object[] theDataForJson = null;
             if(isArgsMitovy == true){
-                Objetview =  theMeth.invoke(objet,parametreFonction);
+                if (isRestApiPresent == false) {
+                    objetview =  theMeth.invoke(objet,parametreFonction);
+                }else{
+                    theDataForJson = (Object[])theMeth.invoke(objet,parametreFonction);
+                }
             }else{
-                Objetview =  theMeth.invoke(objet);
+                if (isRestApiPresent == false) {
+                    objetview =  theMeth.invoke(objet);
+                }else{
+                    theDataForJson = (Object[])theMeth.invoke(objet);
+                }
                 System.out.println(objet.getClass().getName());
                 System.out.println(objet);
             }
-            
-            out.print("Tonga ato");
-            ModelView view = (ModelView)Objetview;
-            String profilEnSession = "Session";
-            String profilVaoTonga = "NSession";
-            boolean connecte = false;
-            String profilMethode = "kokoo";
-            //Verif de l'annotation Auth
-            if (theMeth.isAnnotationPresent(Auth.class)) {
-                if (session.getAttribute("isConnected") == null) {
-                    throw new Exception("Need a connexion");
-                }
-                System.out.println("L'annotation AUTH est present");
-                profilEnSession = String.valueOf(session.getAttribute("profil")) ;
-                connecte = (boolean)session.getAttribute("isConnected");
-                System.out.println("voice le prof sess "+profilEnSession);
-                Auth aut = theMeth.getAnnotation(Auth.class);
-                profilMethode = aut.profil();
-                System.out.println("voici le profil du methode"+profilMethode);
-                if (profilEnSession.compareToIgnoreCase(profilMethode)!=0) {
-                    throw new Exception("Profil "+profilEnSession+" requis!!!!");
-                }
-                // if (view.getSession() != null) {
-                //     for (Map.Entry mapentry : view.getSession().entrySet()) {
-                //         if (mapentry.getKey().toString().compareToIgnoreCase("profil") == 0) {
-                //             profilVaoTonga = String.valueOf(mapentry.getValue()) ;
-                //         }
-                //         // if (mapentry.getKey().toString().compareToIgnoreCase("isConnected") == 0) {
-                //         //     connecte = (boolean)mapentry.getValue();
-                //         // }
-                //     }
-                // }
-                if (profilEnSession.compareToIgnoreCase(profilMethode) == 0 && connecte == true) {
-                        if (view.getSession() != null) {
-                            for (Map.Entry mapentry : view.getSession().entrySet()) {
-                                System.out.println("LE VOILA\n");
-                                req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
-                                System.out.print(mapentry.getKey().toString()+"\n");
-                                session.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+            //.........verif RESTAPI
+            if (isRestApiPresent == true) {
+                String json = "";
+                Gson gson = new Gson();
+                json = gson.toJson(theDataForJson);
+                out.print(json);
+                System.out.println(json);
+            }
+            if (isRestApiPresent == false) {
+                ModelView view = (ModelView)objetview;
+                String profilEnSession = "Session";
+                String profilVaoTonga = "NSession";
+                boolean connecte = false;
+                String profilMethode = "kokoo";
+                //Verif de l'annotation Auth
+                if (theMeth.isAnnotationPresent(Auth.class)) {
+                    if (session.getAttribute("isConnected") == null) {
+                        throw new Exception("Need a connexion");
+                    }
+                    System.out.println("L'annotation AUTH est present");
+                    profilEnSession = String.valueOf(session.getAttribute("profil")) ;
+                    connecte = (boolean)session.getAttribute("isConnected");
+                    System.out.println("voice le prof sess "+profilEnSession);
+                    Auth aut = theMeth.getAnnotation(Auth.class);
+                    profilMethode = aut.profil();
+                    System.out.println("voici le profil du methode"+profilMethode);
+                    if (profilEnSession.compareToIgnoreCase(profilMethode)!=0) {
+                        throw new Exception("Profil "+profilEnSession+" requis!!!!");
+                    }
+                    if (profilEnSession.compareToIgnoreCase(profilMethode) == 0 && connecte == true) {
+                            if (view.getSession() != null) {
+                                for (Map.Entry mapentry : view.getSession().entrySet()) {
+                                    System.out.println("LE VOILA\n");
+                                    req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                                    System.out.print(mapentry.getKey().toString()+"\n");
+                                    session.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                            }
                         }
+                    }else{
+                        throw new Exception("Profil "+profilEnSession+" requis!!!!");
                     }
                 }else{
-                    throw new Exception("Profil "+profilEnSession+" requis!!!!");
-                }
-            }else{
-                System.out.println("Tonga ato @ le else");
-                if (view.getSession() != null) {
-                    for (Map.Entry mapentry : view.getSession().entrySet()) {
-                        System.out.println("LEsasasa VOILA\n");
-                        System.out.print(mapentry.getKey().toString()+"\n");
-                        session.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                    System.out.println("Tonga ato @ le else");
+                    if (view.getSession() != null) {
+                        for (Map.Entry mapentry : view.getSession().entrySet()) {
+                            System.out.println("LEsasasa VOILA\n");
+                            System.out.print(mapentry.getKey().toString()+"\n");
+                            session.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                        }
                     }
                 }
-            }
-            //...................
-            if (view.getData() != null) {
-                for (Map.Entry mapentry : view.getData().entrySet()) {
-                    req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                //...................
+                if (view.getData() != null) {
+                    for (Map.Entry mapentry : view.getData().entrySet()) {
+                        req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                    }
                 }
+                if (view.isJson() == true) {
+                    String jsonAEnvoye = view.getDataJson();
+                    res.setContentType("application/json");
+                    out.print(jsonAEnvoye);
+                    System.out.println(jsonAEnvoye);
+                }
+                RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
+                dispat.forward(req,res);
             }
-            if (view.isJson() == true) {
-                String jsonAEnvoye = view.getDataJson();
-                res.setContentType("application/json");
-                out.print(jsonAEnvoye);
-                System.out.println(jsonAEnvoye);
-            }
-
-            RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
-            dispat.forward(req,res);
-
         } catch (Exception e) {
             e.printStackTrace();
             out.print(e.getMessage());
         }
-        
     }
     protected void doGet(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
         processRequest(req, res);
