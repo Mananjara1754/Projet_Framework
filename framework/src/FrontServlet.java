@@ -21,6 +21,7 @@ import java.util.Objects;
 import modelview.ModelView;
 import note.Fonction;
 import note.Singleton;
+import note.Auth;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -91,6 +92,7 @@ public class FrontServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest req, HttpServletResponse res)throws ServletException, IOException {
         PrintWriter out = res.getWriter();
         Utilitaire use = new Utilitaire();
+        HttpSession session = req.getSession();
         String composant = use.getData(req.getRequestURL().toString());
         out.println("HUELOOOO");
         out.print(composant);
@@ -206,29 +208,20 @@ public class FrontServlet extends HttpServlet {
                 System.out.println("\n"+p.getType());
                 Class targetClass = p.getType();
                 System.out.println(targetClass.getSimpleName());
-                if (targetClass.getSimpleName().compareToIgnoreCase("int") == 0){
+                if (targetClass.getSimpleName().compareToIgnoreCase("String") == 0){
+                    parametreFonction[temp] = String.valueOf(tabParametreString[temp]);
+                    out.print("Nivadika String");
+                }
+                else if (targetClass.getSimpleName().compareToIgnoreCase("int") == 0){
                     parametreFonction[temp] = Integer.parseInt(String.valueOf(tabParametreString[temp]));
                     out.print("Nivadika Int");
-                } else if (targetClass.getSimpleName().compareToIgnoreCase("double") == 0) {
+                }
+                else if (targetClass.getSimpleName().compareToIgnoreCase("double") == 0) {
                     parametreFonction[temp] = Double.parseDouble(String.valueOf(tabParametreString[temp]));
                 }
                 isArgsMitovy = true ;
                 temp++;
             }
-            
-            // Enumeration<String> parameterNames = req.getParameterNames();
-            // String paramName = parameterNames.nextElement();
-            // out.print(paramName+" le parametre");
-            
-            //..........
-            // Method[] function = laclasse.getDeclaredMethods();
-            // Method theMeth = null;
-
-            // for (int i = 0; i < function.length; i++) {
-            //     if (function[i].getName().compareToIgnoreCase(test.getMethod()) == 0) {
-            //         theMeth = function[i];
-            //     }
-            // }
             out.print(theMeth.getParameterTypes());
             out.print(theMeth.getName() + " le nom du method attendue");
                         
@@ -243,12 +236,61 @@ public class FrontServlet extends HttpServlet {
             
             out.print("Tonga ato");
             ModelView view = (ModelView)Objetview;
-            
+            String profilEnSession = "Session";
+            String profilVaoTonga = "NSession";
+            boolean connecte = false;
+            String profilMethode = "kokoo";
+            //Verif de l'annotation Auth
+            if (theMeth.isAnnotationPresent(Auth.class)) {
+                System.out.println("L'annotation AUTH est present");
+                profilEnSession = String.valueOf(session.getAttribute("profil")) ;
+                connecte = (boolean)session.getAttribute("isConnected");
+                System.out.println("voice le prof sess "+profilEnSession);
+                Auth aut = theMeth.getAnnotation(Auth.class);
+                profilMethode = aut.profil();
+                System.out.println("voici le profil du methode"+profilMethode);
+                if (profilEnSession.compareToIgnoreCase(profilMethode)!=0) {
+                    throw new Exception("Profil "+profilEnSession+" requis!!!!");
+                }
+                // if (view.getSession() != null) {
+                //     for (Map.Entry mapentry : view.getSession().entrySet()) {
+                //         if (mapentry.getKey().toString().compareToIgnoreCase("profil") == 0) {
+                //             profilVaoTonga = String.valueOf(mapentry.getValue()) ;
+                //         }
+                //         // if (mapentry.getKey().toString().compareToIgnoreCase("isConnected") == 0) {
+                //         //     connecte = (boolean)mapentry.getValue();
+                //         // }
+                //     }
+                // }
+                if (profilEnSession.compareToIgnoreCase(profilMethode) == 0 && connecte == true) {
+                        if (view.getSession() != null) {
+                            for (Map.Entry mapentry : view.getSession().entrySet()) {
+                                System.out.println("LE VOILA\n");
+                                req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                                System.out.print(mapentry.getKey().toString()+"\n");
+                                session.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                        }
+                    }
+                }else{
+                    throw new Exception("Profil "+profilEnSession+" requis!!!!");
+                }
+            }else{
+                System.out.println("Tonga ato @ le else");
+                if (view.getSession() != null) {
+                    for (Map.Entry mapentry : view.getSession().entrySet()) {
+                        System.out.println("LEsasasa VOILA\n");
+                        System.out.print(mapentry.getKey().toString()+"\n");
+                        session.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
+                    }
+                }
+            }
+            //...................
             if (view.getData() != null) {
                 for (Map.Entry mapentry : view.getData().entrySet()) {
                     req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
                 }
             }
+            
 
             // .... On a deja l'objet et comment le rediriger ? dans quel view?
             // ServletContext context = this.getServletContext();
