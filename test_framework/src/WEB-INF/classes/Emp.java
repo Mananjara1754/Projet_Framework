@@ -6,6 +6,8 @@ import note.Fonction;
 import note.Parametre;
 import fileUpload.FileUpload;
 import java.util.HashMap;
+import note.Singleton;
+@Singleton()
 public class Emp {
     String Nom;
     int Age;
