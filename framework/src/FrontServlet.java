@@ -22,6 +22,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
+//........2Mai
+import java.util.Enumeration;
+import java.lang.reflect.Parameter;
 public class FrontServlet extends HttpServlet {
     HashMap<String,Mapping> MappingUrls; 
 
@@ -74,6 +77,7 @@ public class FrontServlet extends HttpServlet {
                     test = (Mapping)mapentry.getValue();
                 }
             }
+            
             out.print("\n"+"La Classe est :"+test.getClassName());
             Class laclasse = Class.forName(test.getClassName());
             Object objet = laclasse.getConstructor().newInstance();
@@ -112,29 +116,83 @@ public class FrontServlet extends HttpServlet {
                     out.println("Okey le manatsofoka");
                 }
             }
-            //..........
+            //..........SPRINT 8
 
+
+            out.print("Voici l'url "+req.getRequestURL().toString());
+            //Url recent 
+            out.print("Voici l'url "+req.getQueryString());
+
+
+            //Tokony ao anaty utilitaire :
+            boolean isArgsMitovy = false;
             Method[] function = laclasse.getDeclaredMethods();
             Method theMeth = null;
-
             for (int i = 0; i < function.length; i++) {
                 if (function[i].getName().compareToIgnoreCase(test.getMethod()) == 0) {
                     theMeth = function[i];
                 }
             }
+            Parameter[] parameters = theMeth.getParameters();
+            out.print("io le izy teo");
+            out.print(req.getParameter("id"));
+            Vector params = new Vector<>();
+            for (int i = 0; i < parameters.length; i++) {
+                params.add(req.getParameter(Utilitaire.getNomParametreAnnote(parameters[i])));
+            }
+            Object[] tabParametreString = params.toArray();
+            Object[] parametreFonction = new Object[tabParametreString.length];
+            int temp = 0;
+            for (Parameter p : parameters) {
+                System.out.println("\n"+p.getType());
+                Class targetClass = p.getType();
+                System.out.println(targetClass.getSimpleName());
+                if (targetClass.getSimpleName().compareToIgnoreCase("int") == 0){
+                    parametreFonction[temp] = Integer.parseInt(String.valueOf(tabParametreString[temp]));
+                    out.print("Nivadika Int");
+                } else if (targetClass.getSimpleName().compareToIgnoreCase("double") == 0) {
+                    parametreFonction[temp] = Double.parseDouble(String.valueOf(tabParametreString[temp]));
+                }
+                isArgsMitovy = true ;
+                temp++;
+            }
+            
+            // Enumeration<String> parameterNames = req.getParameterNames();
+            // String paramName = parameterNames.nextElement();
+            // out.print(paramName+" le parametre");
+            
+            //..........
+            // Method[] function = laclasse.getDeclaredMethods();
+            // Method theMeth = null;
+
+            // for (int i = 0; i < function.length; i++) {
+            //     if (function[i].getName().compareToIgnoreCase(test.getMethod()) == 0) {
+            //         theMeth = function[i];
+            //     }
+            // }
             out.print(theMeth.getParameterTypes());
             out.print(theMeth.getName() + " le nom du method attendue");
-            Object Objetview =  theMeth.invoke(objet);
+                        
+            Object Objetview = null;
+            if(isArgsMitovy == true){
+                Objetview =  theMeth.invoke(objet,parametreFonction);
+            }else{
+                Objetview =  theMeth.invoke(objet);
+            }
+            
             out.print("Tonga ato");
             ModelView view = (ModelView)Objetview;
+            
             if (view.getData() != null) {
                 for (Map.Entry mapentry : view.getData().entrySet()) {
                     req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
                 }
             }
+
             // .... On a deja l'objet et comment le rediriger ? dans quel view?
             // ServletContext context = this.getServletContext();
             // context.setAttribute("Objet",objet);
+
             RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
             dispat.forward(req,res);
 

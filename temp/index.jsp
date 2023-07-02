@@ -15,6 +15,7 @@
         <input type="number" name="Age" id=""><br><br>
         <input type="submit" value="Okey">
     </form>
+    <a href="getId?id=5">Test</a>
 </body>
 </html>
 

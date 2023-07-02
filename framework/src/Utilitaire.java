@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.io.File;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
 import java.util.Vector;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -17,9 +18,21 @@ import etu1754.framework.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.lang.reflect.*;
+import note.*;
 public class Utilitaire {
-    
+
+    public static String getNomParametreAnnote(Parameter param) throws Exception {
+        String annotation = "note.Parametre";
+        Class annotationClass = Class.forName(annotation);
+        if(param.isAnnotationPresent(annotationClass)){
+            Parametre paramName = (Parametre) param.getAnnotation(annotationClass);
+            //Retourne le nom du parametre annnote
+            return paramName.nomParametre();
+        } else {
+            throw new Exception("Annote par: @Parameter les parametres de la fonction");
+        }
+    }
     public void verif(String element,HashMap<String,Mapping> MappingUrls)throws Exception{
         Mapping test = null;
         int repere = 0;
@@ -119,5 +132,6 @@ public class Utilitaire {
         }
         return cl;
     }
+    
 }
 
