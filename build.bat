@@ -9,12 +9,12 @@ jar -cf frameworkS4.jar .
 copy frameworkS4.jar "..\..\test_framework\src\WEB-INF\lib"
 
 @REM compilation du projet de test
-    cd ..\..\test_framework
-    javac -d WEB-INF/classes WEB-INF/classes/*.java
+    cd ..\..\test_framework\
+    javac -d src\WEB-INF/classes src\WEB-INF/classes/*.java
 
 
 @REM suppression du contenu du repertoire temp
-    cd ../temp
+    cd ..\temp
 
     rmdir /S /Q "WEB-INF"
 

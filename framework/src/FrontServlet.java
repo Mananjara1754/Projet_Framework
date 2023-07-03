@@ -314,8 +314,6 @@ public class FrontServlet extends HttpServlet {
                     }
                     if (view.getRemoveSession() != null) {
                         for (int i = 0; i < view.getRemoveSession().size(); i++) {
-                            String element = myList.get(i);
-                            System.out.println(element);
                             session.removeAttribute(view.getRemoveSession().get(i));
                         }
                     }
