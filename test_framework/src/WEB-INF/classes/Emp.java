@@ -57,6 +57,8 @@ public class Emp {
         mv.addItem("all_emp",e);
         System.out.println("all emploue");
         mv.setJson(true);
+        mv.setInvalidateSession(true);
+        System.out.println(mv.isInvalidateSession());
         return mv;
     }
     @Fonction(nomMethod = "login")

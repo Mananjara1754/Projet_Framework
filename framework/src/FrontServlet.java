@@ -304,12 +304,28 @@ public class FrontServlet extends HttpServlet {
                         req.setAttribute(mapentry.getKey().toString(),mapentry.getValue());
                     }
                 }
+                //Remove session
+                if (view.isInvalidateSession() == true) {
+                    System.out.println("Remove Session activate");
+                    if (view.getRemoveSession() == null) {
+                        for (Map.Entry mapentry : view.getSession().entrySet()) {
+                            session.removeAttribute(mapentry.getKey().toString());
+                        }
+                    }
+                    if (view.getRemoveSession() != null) {
+                        for (int i = 0; i < view.getRemoveSession().size(); i++) {
+                            session.removeAttribute(view.getRemoveSession().get(i));
+                        }
+                    }
+                }
+
                 if (view.isJson() == true) {
                     String jsonAEnvoye = view.getDataJson();
                     res.setContentType("application/json");
                     out.print(jsonAEnvoye);
                     System.out.println(jsonAEnvoye);
                 }
+                
                 RequestDispatcher dispat = req.getRequestDispatcher(view.getView()); 
                 dispat.forward(req,res);
             }

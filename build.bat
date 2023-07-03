@@ -9,12 +9,12 @@ jar -cf frameworkS4.jar .
 copy frameworkS4.jar "..\..\test_framework\src\WEB-INF\lib"
 
 @REM compilation du projet de test
-    cd ..\..\test_framework
-    javac -d WEB-INF/classes WEB-INF/classes/*.java
+    cd ..\..\test_framework\
+    javac -d src\WEB-INF/classes src\WEB-INF/classes/*.java
 
 
 @REM suppression du contenu du repertoire temp
-    cd ../temp
+    cd ..\temp
 
     rmdir /S /Q "WEB-INF"
 
@@ -32,6 +32,6 @@ copy frameworkS4.jar "..\..\test_framework\src\WEB-INF\lib"
 @REM transformation du repertoire temp en fichier war
     cd temp
 
-    jar -cf test_framework.war .
+    jar -cf testFrameworkOkey.war .
 
-copy test_framework.war "E:\FIANARANA\Logiciel\apache-tomcat-9.0.64-windows-x64\apache-tomcat-9.0.64\webapps"
+copy testFrameworkOkey.war "E:\FIANARANA\Logiciel\apache-tomcat-9.0.64-windows-x64\apache-tomcat-9.0.64\webapps"
