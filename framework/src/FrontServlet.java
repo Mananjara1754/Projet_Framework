@@ -311,10 +311,13 @@ public class FrontServlet extends HttpServlet {
                         for (Map.Entry mapentry : view.getSession().entrySet()) {
                             session.removeAttribute(mapentry.getKey().toString());
                         }
+                        System.out.println("Voafafa daolo");
                     }
                     if (view.getRemoveSession() != null) {
                         for (int i = 0; i < view.getRemoveSession().size(); i++) {
+                           
                             session.removeAttribute(view.getRemoveSession().get(i));
+                             System.out.println("Voafafa"+view.getRemoveSession().get(i));
                         }
                     }
                 }
