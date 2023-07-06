@@ -57,7 +57,12 @@ public class Emp {
         mv.addItem("all_emp",e);
         System.out.println("all emploue");
         mv.setJson(true);
+
+        List<String> lst =  new ArrayList<String>();
+        lst.add("profil");
+        lst.add("nom");
         mv.setInvalidateSession(true);
+        mv.setRemoveSession(lst);
         System.out.println(mv.isInvalidateSession());
         return mv;
     }

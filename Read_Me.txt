@@ -32,6 +32,7 @@ import fileUpload.FileUpload;
 import note.Parametre;
 import note.Auth;
 import note.RestAPI;
+import note.Singleton;
 
 NB:
 
@@ -39,4 +40,12 @@ NB:
 - Et les fonctions doivent retourner un view 
 - Dans une formulaire les noms des input doivent etre le meme
 aux attributs d'une classe forme
-- Il faut etre connetee si on veut specifier les autorisations a une foncction specifique
+- Si on veut sessioner on l'introduis la cle et la valeur du variable a sessione dans l'hashmap session de mv
+<String,Objetc>
+- Il faut etre connete et avoir l'autorisation si on veut appeler certaines fonctions
+specifiques.
+- Si une fonction retourne une view et si on veut en tant que json les donnees hashmap<String , Object> data 
+du mv , on utilise isJson = true
+- Si une fonction retourne une tableau d'objet et si l' on veut en json on doit l'annoter par RestAPI 
+- Si on veut supprimer une session on fait invalidateSession du mv en true et si on veut specifier le session a 
+supprime on mets dans le removeSession une list de String , les cles des sessions a supprime .
